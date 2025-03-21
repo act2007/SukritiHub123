@@ -18,7 +18,11 @@ const Visitors = () => {
       
       <Tabs defaultValue="visitors" className="space-y-6">
         <TabsList>
-          <TabsTrigger value="visitors">Visitors</TabsTrigger>
+          <TabsTrigger value="visitors">All Visitors</TabsTrigger>
+          <TabsTrigger value="domestic">Domestic Help</TabsTrigger>
+          <TabsTrigger value="delivery">Delivery Staff</TabsTrigger>
+          <TabsTrigger value="preapproved">Pre-approved Guests</TabsTrigger>
+          <TabsTrigger value="shortstay">Short Stay Guests</TabsTrigger>
           <TabsTrigger value="scanner">QR Scanner</TabsTrigger>
         </TabsList>
         
@@ -26,6 +30,50 @@ const Visitors = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <VisitorList />
+            </div>
+            <div>
+              <QrGenerator />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="domestic" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <VisitorList visitorType="domestic" />
+            </div>
+            <div>
+              <QrGenerator />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="delivery" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <VisitorList visitorType="delivery" />
+            </div>
+            <div>
+              <QrGenerator />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="preapproved" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <VisitorList visitorType="preapproved" />
+            </div>
+            <div>
+              <QrGenerator />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="shortstay" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <VisitorList visitorType="shortstay" />
             </div>
             <div>
               <QrGenerator />
@@ -41,14 +89,14 @@ const Visitors = () => {
               <h2 className="text-lg font-medium">Recent Scans</h2>
               <div className="border border-border rounded-lg divide-y">
                 {[
-                  {name: 'John Smith', time: '10:30 AM', status: 'Checked In'},
-                  {name: 'Amazon Delivery', time: '11:45 AM', status: 'Checked In'},
-                  {name: 'Sarah Williams', time: '01:15 PM', status: 'Checked Out'},
+                  {name: 'Lakshmi Devi', time: '10:30 AM', status: 'Checked In', type: 'Domestic Help'},
+                  {name: 'Swiggy Delivery', time: '11:45 AM', status: 'Checked In', type: 'Delivery'},
+                  {name: 'Priya Sharma', time: '01:15 PM', status: 'Checked Out', type: 'Guest'},
                 ].map((scan, index) => (
                   <div key={index} className="p-3 flex justify-between items-center">
                     <div>
                       <p className="font-medium">{scan.name}</p>
-                      <p className="text-sm text-muted-foreground">{scan.time}</p>
+                      <p className="text-sm text-muted-foreground">{scan.time} • {scan.type}</p>
                     </div>
                     <span className="text-sm">{scan.status}</span>
                   </div>

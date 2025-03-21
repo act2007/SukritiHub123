@@ -8,6 +8,7 @@ export interface Resident {
   image?: string;
   moveInDate: string;
   status: 'active' | 'inactive';
+  type?: 'owner' | 'tenant';
 }
 
 export interface Visitor {
@@ -20,7 +21,7 @@ export interface Visitor {
   expectedDeparture?: string;
   status: 'pending' | 'approved' | 'checked-in' | 'checked-out' | 'denied';
   vehicleNumber?: string;
-  visitorType: 'guest' | 'delivery' | 'service';
+  visitorType: 'guest' | 'delivery' | 'service' | 'domestic' | 'preapproved' | 'shortstay';
   qrCode?: string;
 }
 
@@ -81,4 +82,13 @@ export interface ChartData {
     borderColor?: string;
     borderWidth?: number;
   }[];
+}
+
+export interface BookkeepingDocument {
+  id: string;
+  title: string;
+  type: 'account' | 'bylaw' | 'gbm-minute';
+  date: string;
+  fileUrl?: string;
+  description?: string;
 }

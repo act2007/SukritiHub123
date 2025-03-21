@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Search, Phone, Mail, Home, Plus } from 'lucide-react';
 import { Resident } from '@/lib/types';
 
@@ -25,9 +26,10 @@ export function ResidentSearch() {
 
 interface ResidentListProps {
   className?: string;
+  residentType?: string;
 }
 
-export function ResidentList({ className }: ResidentListProps) {
+export function ResidentList({ className, residentType }: ResidentListProps) {
   const [residents, setResidents] = useState<Resident[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,48 +39,53 @@ export function ResidentList({ className }: ResidentListProps) {
       const mockResidents: Resident[] = [
         {
           id: '1',
-          name: 'John Smith',
-          email: 'john.smith@example.com',
-          phone: '+1 (555) 123-4567',
+          name: 'Rajesh Sharma',
+          email: 'rajesh.sharma@example.com',
+          phone: '+91 9876543210',
           unit: 'A-101',
           moveInDate: '2022-06-15',
           status: 'active',
+          type: 'owner'
         },
         {
           id: '2',
-          name: 'Sarah Johnson',
-          email: 'sarah.j@example.com',
-          phone: '+1 (555) 987-6543',
+          name: 'Priya Patel',
+          email: 'priya.patel@example.com',
+          phone: '+91 8765432109',
           unit: 'B-205',
           moveInDate: '2021-09-22',
           status: 'active',
+          type: 'tenant'
         },
         {
           id: '3',
-          name: 'Robert Chen',
-          email: 'robert.c@example.com',
-          phone: '+1 (555) 234-5678',
+          name: 'Anand Krishnan',
+          email: 'anand.k@example.com',
+          phone: '+91 7654321098',
           unit: 'C-304',
           moveInDate: '2023-01-10',
           status: 'active',
+          type: 'owner'
         },
         {
           id: '4',
-          name: 'Maria Garcia',
-          email: 'maria.g@example.com',
-          phone: '+1 (555) 345-6789',
+          name: 'Sunita Nagarajan',
+          email: 'sunita.n@example.com',
+          phone: '+91 6543210987',
           unit: 'A-202',
           moveInDate: '2022-11-05',
           status: 'active',
+          type: 'owner'
         },
         {
           id: '5',
-          name: 'David Wilson',
-          email: 'david.w@example.com',
-          phone: '+1 (555) 456-7890',
+          name: 'Venkat Subramaniam',
+          email: 'venkat.s@example.com',
+          phone: '+91 5432109876',
           unit: 'B-103',
           moveInDate: '2022-08-17',
           status: 'inactive',
+          type: 'tenant'
         },
       ];
       
@@ -86,6 +93,11 @@ export function ResidentList({ className }: ResidentListProps) {
       setLoading(false);
     }, 1000);
   }, []);
+
+  // Filter residents based on type if provided
+  const filteredResidents = residentType 
+    ? residents.filter(resident => resident.type === residentType)
+    : residents;
 
   if (loading) {
     return (
@@ -118,7 +130,7 @@ export function ResidentList({ className }: ResidentListProps) {
 
   return (
     <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${className}`}>
-      {residents.map((resident) => (
+      {filteredResidents.map((resident) => (
         <Card key={resident.id} className="overflow-hidden animate-slide-in-bottom hover:shadow-medium transition-all duration-300">
           <CardContent className="p-4">
             <div className="flex items-start gap-4">
@@ -127,7 +139,12 @@ export function ResidentList({ className }: ResidentListProps) {
                 <AvatarFallback className="bg-primary/10 text-primary">{getInitials(resident.name)}</AvatarFallback>
               </Avatar>
               <div className="space-y-1 flex-1">
-                <h3 className="font-medium">{resident.name}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-medium">{resident.name}</h3>
+                  <Badge variant={resident.type === 'owner' ? 'default' : 'secondary'} className="text-xs">
+                    {resident.type === 'owner' ? 'Owner' : 'Tenant'}
+                  </Badge>
+                </div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Home size={14} />
                   <span>{resident.unit}</span>

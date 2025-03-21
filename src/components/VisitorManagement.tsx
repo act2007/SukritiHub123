@@ -41,12 +41,25 @@ function VisitorCard({ visitor, onApprove, onDeny }: VisitorCardProps) {
     }
   };
 
+  const getVisitorTypeBadge = (type: string) => {
+    switch (type) {
+      case 'domestic': return <Badge variant="outline" className="ml-2">Domestic Help</Badge>;
+      case 'delivery': return <Badge variant="outline" className="ml-2">Delivery</Badge>;
+      case 'preapproved': return <Badge variant="outline" className="ml-2">Pre-approved</Badge>;
+      case 'shortstay': return <Badge variant="outline" className="ml-2">Short Stay</Badge>;
+      default: return null;
+    }
+  };
+
   return (
     <Card className="overflow-hidden hover:shadow-soft transition-all duration-300 animate-slide-in-bottom">
       <CardContent className="p-4">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="font-medium mb-1">{visitor.name}</h3>
+            <div className="flex items-center mb-1">
+              <h3 className="font-medium">{visitor.name}</h3>
+              {getVisitorTypeBadge(visitor.visitorType)}
+            </div>
             <div className="space-y-1 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Calendar size={14} />
@@ -101,7 +114,11 @@ function VisitorCard({ visitor, onApprove, onDeny }: VisitorCardProps) {
   );
 }
 
-export function VisitorList() {
+interface VisitorListProps {
+  visitorType?: string;
+}
+
+export function VisitorList({ visitorType }: VisitorListProps) {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [activeTab, setActiveTab] = useState('pending');
   const [loading, setLoading] = useState(true);
@@ -112,54 +129,65 @@ export function VisitorList() {
       const mockVisitors: Visitor[] = [
         {
           id: '1',
-          name: 'Alex Johnson',
-          purpose: 'Personal visit',
+          name: 'Lakshmi Devi',
+          purpose: 'Daily household work',
           hostUnit: 'A-101',
-          hostName: 'John Smith',
+          hostName: 'Rajesh Sharma',
           expectedArrival: '2023-05-15T10:30:00',
           status: 'pending',
-          visitorType: 'guest',
+          visitorType: 'domestic',
         },
         {
           id: '2',
-          name: 'FedEx Delivery',
-          purpose: 'Package delivery',
+          name: 'Swiggy Delivery',
+          purpose: 'Food delivery',
           hostUnit: 'B-205',
-          hostName: 'Sarah Johnson',
+          hostName: 'Priya Patel',
           expectedArrival: '2023-05-15T14:00:00',
           status: 'approved',
           visitorType: 'delivery',
-          vehicleNumber: 'ABC-1234',
+          vehicleNumber: 'KA-01-AB-1234',
         },
         {
           id: '3',
-          name: 'Plumber',
+          name: 'Raju Plumber',
           purpose: 'Fix kitchen sink',
           hostUnit: 'C-304',
-          hostName: 'Robert Chen',
+          hostName: 'Anand Krishnan',
           expectedArrival: '2023-05-15T16:30:00',
           status: 'checked-in',
           visitorType: 'service',
         },
         {
           id: '4',
-          name: 'Melissa White',
+          name: 'Meera Desai',
           purpose: 'Birthday party',
           hostUnit: 'A-202',
-          hostName: 'Maria Garcia',
+          hostName: 'Sunita Nagarajan',
           expectedArrival: '2023-05-16T18:00:00',
           status: 'pending',
-          visitorType: 'guest',
+          visitorType: 'preapproved',
         },
         {
           id: '5',
-          name: 'Amazon Delivery',
+          name: 'Flipkart Delivery',
           purpose: 'Package delivery',
           hostUnit: 'B-103',
-          hostName: 'David Wilson',
+          hostName: 'Venkat Subramaniam',
           expectedArrival: '2023-05-16T11:15:00',
           status: 'denied',
           visitorType: 'delivery',
+        },
+        {
+          id: '6',
+          name: 'Rahul Mehta',
+          purpose: 'Weekend stay',
+          hostUnit: 'D-401',
+          hostName: 'Deepak Reddy',
+          expectedArrival: '2023-05-17T20:00:00',
+          expectedDeparture: '2023-05-19T10:00:00',
+          status: 'approved',
+          visitorType: 'shortstay',
         },
       ];
       
@@ -185,6 +213,10 @@ export function VisitorList() {
   };
   
   const filteredVisitors = visitors.filter(visitor => {
+    // Filter by visitor type if specified
+    if (visitorType && visitor.visitorType !== visitorType) return false;
+    
+    // Then filter by status tab
     if (activeTab === 'all') return true;
     return visitor.status === activeTab;
   });

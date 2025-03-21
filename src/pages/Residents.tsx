@@ -27,7 +27,8 @@ const Residents = () => {
       <Tabs defaultValue="all" className="mb-6">
         <TabsList>
           <TabsTrigger value="all">All Residents</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
+          <TabsTrigger value="owners">Owners</TabsTrigger>
+          <TabsTrigger value="tenants">Tenants</TabsTrigger>
           <TabsTrigger value="inactive">Inactive</TabsTrigger>
         </TabsList>
         
@@ -46,8 +47,12 @@ const Residents = () => {
           <ResidentList />
         </TabsContent>
         
-        <TabsContent value="active" className="mt-4">
-          <ResidentList />
+        <TabsContent value="owners" className="mt-4">
+          <ResidentList residentType="owner" />
+        </TabsContent>
+        
+        <TabsContent value="tenants" className="mt-4">
+          <ResidentList residentType="tenant" />
         </TabsContent>
         
         <TabsContent value="inactive" className="mt-4">
@@ -73,8 +78,12 @@ const Residents = () => {
                 <span className="font-medium">248</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Active Residents</span>
-                <span className="font-medium">240</span>
+                <span className="text-muted-foreground">Owners</span>
+                <span className="font-medium">180</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Tenants</span>
+                <span className="font-medium">60</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Inactive Residents</span>
@@ -96,10 +105,10 @@ const Residents = () => {
           <CardContent>
             <div className="space-y-4">
               {[
-                {action: 'New resident added', details: 'Emily Johnson, Unit B-304', date: 'May 15, 2023'},
-                {action: 'Contact information updated', details: 'Michael Smith, Unit A-102', date: 'May 14, 2023'},
-                {action: 'Status changed to inactive', details: 'Robert Chen, Unit C-201', date: 'May 12, 2023'},
-                {action: 'New resident added', details: 'Jessica Davis, Unit D-105', date: 'May 10, 2023'},
+                {action: 'New resident added', details: 'Aditya Mehta (Owner), Unit B-304', date: 'May 15, 2023'},
+                {action: 'Contact information updated', details: 'Prakash Iyer (Tenant), Unit A-102', date: 'May 14, 2023'},
+                {action: 'Status changed to inactive', details: 'Ramesh Nair (Owner), Unit C-201', date: 'May 12, 2023'},
+                {action: 'New resident added', details: 'Shwetha Krishnan (Tenant), Unit D-105', date: 'May 10, 2023'},
               ].map((item, index) => (
                 <div key={index} className="flex items-start gap-3 pb-3 border-b border-border last:border-0 last:pb-0">
                   <div className="w-2 h-2 rounded-full bg-primary mt-1.5"></div>

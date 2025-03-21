@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { Navbar } from './Navbar';
-import { SidebarProvider, Sidebar, SidebarContent, SidebarFooter, SidebarTrigger } from "@/components/ui/sidebar";
-import { Home, Users, UserPlus, Shield, DollarSign, Menu, X } from 'lucide-react';
+import { SidebarProvider, Sidebar, SidebarContent, SidebarFooter, SidebarTrigger, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from "@/components/ui/sidebar";
+import { Home, Users, UserPlus, Shield, DollarSign, Menu, X, FileText, Book, List, Clock } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLocation, Link } from 'react-router-dom';
 
@@ -26,6 +27,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { title: "Visitors", icon: UserPlus, path: "/visitors" },
     { title: "Guards", icon: Shield, path: "/guards" },
     { title: "Vendors", icon: DollarSign, path: "/vendors" },
+    { 
+      title: "Bookkeeping", 
+      icon: Book, 
+      path: "/bookkeeping",
+      subItems: [
+        { title: "Accounts", icon: FileText, path: "/bookkeeping/accounts" },
+        { title: "Bye-Laws", icon: List, path: "/bookkeeping/bye-laws" },
+        { title: "GBM Minutes", icon: Clock, path: "/bookkeeping/gbm-minutes" },
+      ]
+    },
   ];
 
   const isActive = (path: string) => {
@@ -55,18 +66,51 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <SidebarContent className="p-0">
             <nav className="space-y-1 p-2">
               {menuItems.map((item) => (
-                <Link
-                  key={item.title}
-                  to={item.path}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ease-in-out ${
-                    isActive(item.path) 
-                      ? 'bg-primary text-primary-foreground font-medium' 
-                      : 'text-foreground hover:bg-secondary'
-                  }`}
-                >
-                  <item.icon size={18} />
-                  <span>{item.title}</span>
-                </Link>
+                <div key={item.title}>
+                  {item.subItems ? (
+                    <div className="mb-1">
+                      <Link
+                        to={item.path}
+                        className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ease-in-out ${
+                          isActive(item.path) 
+                            ? 'bg-primary text-primary-foreground font-medium' 
+                            : 'text-foreground hover:bg-secondary'
+                        }`}
+                      >
+                        <item.icon size={18} />
+                        <span>{item.title}</span>
+                      </Link>
+                      <div className="ml-7 mt-1 space-y-1 border-l border-border pl-3">
+                        {item.subItems.map((subItem) => (
+                          <Link
+                            key={subItem.title}
+                            to={subItem.path}
+                            className={`flex items-center space-x-2 px-2 py-1.5 text-sm rounded-md transition-all duration-200 ease-in-out ${
+                              isActive(subItem.path) 
+                                ? 'bg-primary/80 text-primary-foreground font-medium' 
+                                : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                            }`}
+                          >
+                            <subItem.icon size={16} />
+                            <span>{subItem.title}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.path}
+                      className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-200 ease-in-out ${
+                        isActive(item.path) 
+                          ? 'bg-primary text-primary-foreground font-medium' 
+                          : 'text-foreground hover:bg-secondary'
+                      }`}
+                    >
+                      <item.icon size={18} />
+                      <span>{item.title}</span>
+                    </Link>
+                  )}
+                </div>
               ))}
             </nav>
           </SidebarContent>

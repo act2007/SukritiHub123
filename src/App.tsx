@@ -9,6 +9,9 @@ import Residents from "./pages/Residents";
 import Visitors from "./pages/Visitors";
 import Guards from "./pages/Guards";
 import Vendors from "./pages/Vendors";
+import BookkeepingAccounts from "./pages/BookkeepingAccounts";
+import BookkeepingByelaws from "./pages/BookkeepingByelaws";
+import BookkeepingMinutes from "./pages/BookkeepingMinutes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +28,9 @@ const App = () => (
           <Route path="/visitors" element={<Visitors />} />
           <Route path="/guards" element={<Guards />} />
           <Route path="/vendors" element={<Vendors />} />
+          <Route path="/bookkeeping/accounts" element={<BookkeepingAccounts />} />
+          <Route path="/bookkeeping/bye-laws" element={<BookkeepingByelaws />} />
+          <Route path="/bookkeeping/gbm-minutes" element={<BookkeepingMinutes />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
