@@ -1,74 +1,48 @@
 
 import Layout from "@/components/Layout";
-import { DashboardStats, RecentActivity, QuickActions } from "@/components/Dashboard";
+import { DashboardStats, RecentActivity, QuickActions, UpcomingVisits } from "@/components/Dashboard";
 import { Button } from "@/components/ui/button";
-import { Plus, Heart, Calendar, MessageCircle, Info } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 
 const Index = () => {
   return (
     <Layout>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-medium">Welcome to MeNova</h1>
+        <h1 className="text-2xl font-medium">Welcome to Sukriti Hub</h1>
         <Button>
           <Plus size={16} className="mr-2" />
-          New Journal Entry
+          New Request
         </Button>
-      </div>
-      
-      <div className="mb-6">
-        <h2 className="text-lg font-medium mb-3">Your AI Companion for Menopause</h2>
-        <p className="text-muted-foreground">
-          Breaking the silent struggle with knowledge, tracking, and support.
-        </p>
       </div>
       
       <DashboardStats />
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="col-span-2">
-          <RecentActivity />
-        </div>
-        <div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <RecentActivity />
+        <div className="space-y-6">
           <QuickActions />
+          <UpcomingVisits />
         </div>
       </div>
       
-      <div className="border-t border-border pt-6">
+      <div className="mt-8 border-t border-border pt-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-medium">MeNova Features</h2>
+          <h2 className="text-lg font-medium">Recent Reports</h2>
           <Button variant="outline" size="sm">
-            <Info size={14} className="mr-2" />
-            Learn More
+            <FileText size={14} className="mr-2" />
+            View All Reports
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            {
-              title: 'Resource Access',
-              description: 'Reliable information about menopause from educational material to personal development tools.',
-              icon: Info
-            },
-            {
-              title: 'Symptom Tracking',
-              description: 'Monitor symptoms, identify patterns, and log health records with our easy journaling tools.',
-              icon: Calendar
-            },
-            {
-              title: 'Personal Assistant',
-              description: 'Empathetic conversations and guidance in a safe, supportive environment.',
-              icon: MessageCircle
-            }
-          ].map((feature, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {['Monthly Expenses', 'Visitor Analytics', 'Maintenance Requests', 'Vendor Payments'].map((report, index) => (
             <div 
               key={index} 
-              className="p-6 border border-border rounded-lg hover:border-primary/20 transition-colors bg-card"
+              className="p-4 border border-border rounded-lg hover:border-primary/20 transition-colors cursor-pointer"
             >
-              <div className="rounded-full bg-primary/10 p-3 w-fit mb-4">
-                <feature.icon size={24} className="text-primary" />
-              </div>
-              <h3 className="font-medium text-lg mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.description}</p>
+              <FileText size={32} className="mb-2 text-primary/60" />
+              <h3 className="font-medium">{report}</h3>
+              <p className="text-sm text-muted-foreground">Last updated: May 15, 2023</p>
             </div>
           ))}
         </div>
