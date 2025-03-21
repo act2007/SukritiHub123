@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { Navbar } from './Navbar';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarFooter, SidebarTrigger } from "@/components/ui/sidebar";
-import { Home, Users, UserPlus, Shield, DollarSign, Menu, X } from 'lucide-react';
+import { Home, Heart, Calendar, MessageCircle, Info, Book, Menu, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLocation, Link } from 'react-router-dom';
 
@@ -22,10 +23,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const menuItems = [
     { title: "Dashboard", icon: Home, path: "/" },
-    { title: "Residents", icon: Users, path: "/residents" },
-    { title: "Visitors", icon: UserPlus, path: "/visitors" },
-    { title: "Guards", icon: Shield, path: "/guards" },
-    { title: "Vendors", icon: DollarSign, path: "/vendors" },
+    { title: "Resources", icon: Book, path: "/resources" },
+    { title: "Symptom Tracker", icon: Calendar, path: "/symptom-tracker" },
+    { title: "AI Assistant", icon: MessageCircle, path: "/assistant" },
+    { title: "Community", icon: Heart, path: "/community" },
   ];
 
   const isActive = (path: string) => {
@@ -40,7 +41,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Sidebar className="border-r border-border">
           <div className="h-16 flex items-center justify-center border-b border-border p-2">
             <Link to="/" className="focus-ring rounded-md">
-              <h1 className="text-xl font-semibold text-primary">SukritiHub</h1>
+              <h1 className="text-xl font-semibold text-primary">MeNova</h1>
             </Link>
             {isMobile && (
               <button 
@@ -72,7 +73,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </SidebarContent>
           <SidebarFooter className="p-4 border-t border-border">
             <div className="text-xs text-muted-foreground">
-              <p>© {new Date().getFullYear()} SukritiHub</p>
+              <p>© {new Date().getFullYear()} MeNova</p>
               <p>v1.0.0</p>
             </div>
           </SidebarFooter>
