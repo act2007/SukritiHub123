@@ -2,17 +2,26 @@
 import Layout from "@/components/Layout";
 import { DashboardStats, RecentActivity, QuickActions, UpcomingVisits } from "@/components/Dashboard";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, Bot } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
     <Layout>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-medium">Welcome to SukritiHub Whitefield</h1>
-        <Button>
-          <Plus size={16} className="mr-2" />
-          New Request
-        </Button>
+        <div className="flex gap-2">
+          <Link to="/finance-chat">
+            <Button variant="outline">
+              <Bot size={16} className="mr-2" />
+              Finance Assistant
+            </Button>
+          </Link>
+          <Button>
+            <Plus size={16} className="mr-2" />
+            New Request
+          </Button>
+        </div>
       </div>
       
       <DashboardStats />

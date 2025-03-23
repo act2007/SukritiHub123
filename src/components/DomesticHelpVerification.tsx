@@ -1,322 +1,253 @@
 
-import { useState, useRef, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Camera, Check, X, RefreshCw, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { ScanFace, Camera, Check, X, AlertTriangle } from 'lucide-react';
-import { Visitor } from '@/lib/types';
-
-interface VerificationResult {
-  visitor: Visitor | null;
-  matchScore: number;
-  verified: boolean;
-  message: string;
-}
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export function DomesticHelpVerification() {
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<VerificationResult | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationResult, setVerificationResult] = useState<'success' | 'failed' | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { toast } = useToast();
-  
-  // Mock registered domestic helps for demonstration
-  const registeredHelpers: Visitor[] = [
-    {
-      id: '1',
-      name: 'Lakshmi Devi',
-      purpose: 'Daily household work',
-      hostUnit: 'A-101',
-      hostName: 'Rajesh Sharma',
-      expectedArrival: '2023-05-15T10:30:00',
-      status: 'approved',
-      visitorType: 'domestic',
-      qrCode: 'somecode1',
-    },
-    {
-      id: '2',
-      name: 'Ravi Kumar',
-      purpose: 'Cleaning and cooking',
-      hostUnit: 'B-203',
-      hostName: 'Priya Mehta',
-      expectedArrival: '2023-05-16T09:00:00',
-      status: 'approved',
-      visitorType: 'domestic',
-      qrCode: 'somecode2',
-    },
-    {
-      id: '3',
-      name: 'Sunita Rao',
-      purpose: 'Child care',
-      hostUnit: 'C-302',
-      hostName: 'Vikram Desai',
-      expectedArrival: '2023-05-17T08:30:00',
-      status: 'approved',
-      visitorType: 'domestic',
-      qrCode: 'somecode3',
-    },
-  ];
+
+  useEffect(() => {
+    // Cleanup function to stop camera when component unmounts
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
+  }, []);
 
   const startCamera = async () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      toast({
-        title: "Camera Error",
-        description: "Camera not supported on this device or browser",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: "user" },
-        audio: false 
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 480 } },
+        audio: false,
       });
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        setIsCapturing(true);
+        setIsCameraActive(true);
+        setErrorMessage(null);
       }
     } catch (error) {
-      console.error("Error accessing camera:", error);
+      console.error('Error accessing camera:', error);
+      setErrorMessage('Unable to access camera. Please check permissions.');
       toast({
+        variant: "destructive",
         title: "Camera Error",
-        description: "Could not access the camera. Please check permissions.",
-        variant: "destructive"
+        description: "Could not access your camera. Please check permissions.",
       });
     }
   };
 
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      const tracks = stream.getTracks();
-      
+      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
       tracks.forEach(track => track.stop());
       videoRef.current.srcObject = null;
-      setIsCapturing(false);
+      setIsCameraActive(false);
     }
   };
 
   const captureImage = () => {
-    if (!videoRef.current) return;
-    
-    const canvas = document.createElement('canvas');
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-      const imageDataUrl = canvas.toDataURL('image/jpeg');
-      setCapturedImage(imageDataUrl);
-      stopCamera();
-      verifyImage(imageDataUrl);
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+      
+      if (context) {
+        // Set canvas dimensions to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Draw video frame to canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Convert canvas to image data URL
+        const imageDataUrl = canvas.toDataURL('image/png');
+        setCapturedImage(imageDataUrl);
+        
+        // Stop camera after capturing
+        stopCamera();
+      }
     }
   };
 
-  const verifyImage = (imageDataUrl: string) => {
-    setLoading(true);
+  const resetCamera = () => {
+    setCapturedImage(null);
+    setVerificationResult(null);
+    startCamera();
+  };
+
+  const verifyImage = () => {
+    if (!capturedImage) return;
     
-    // Simulating facial recognition verification process
+    setIsVerifying(true);
+    
+    // Mock verification process with timeout
     setTimeout(() => {
-      // For demo purpose, randomly match with one of the registered helpers or not match
-      const randomMatch = Math.random() > 0.3;
+      // Simulating a 70% success rate
+      const isMatch = Math.random() < 0.7;
       
-      if (randomMatch) {
-        const randomHelper = registeredHelpers[Math.floor(Math.random() * registeredHelpers.length)];
-        const matchScore = Math.floor(Math.random() * 20) + 80; // Random score between 80-99
-        
-        setResult({
-          visitor: randomHelper,
-          matchScore: matchScore,
-          verified: matchScore >= 85,
-          message: matchScore >= 85 
-            ? "Identity verified successfully" 
-            : "Low confidence match, please verify manually"
-        });
-        
+      if (isMatch) {
+        setVerificationResult('success');
         toast({
-          title: matchScore >= 85 ? "Verification Successful" : "Manual Verification Required",
-          description: matchScore >= 85 
-            ? `Verified as ${randomHelper.name}` 
-            : "Confidence level too low for automatic verification",
-          variant: matchScore >= 85 ? "default" : "warning"
+          title: "Verification Successful",
+          description: "Identity matched with registered domestic help.",
         });
       } else {
-        setResult({
-          visitor: null,
-          matchScore: Math.floor(Math.random() * 30) + 50, // Random score between 50-79
-          verified: false,
-          message: "No match found in the registry"
-        });
-        
+        setVerificationResult('failed');
         toast({
+          variant: "destructive",
           title: "Verification Failed",
-          description: "No matching identity found in the registry",
-          variant: "destructive"
+          description: "No match found in the system.",
         });
       }
       
-      setLoading(false);
+      setIsVerifying(false);
     }, 2000);
   };
 
-  const resetCapture = () => {
-    setCapturedImage(null);
-    setResult(null);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    return () => {
-      stopCamera();
-    };
-  }, []);
-
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <ScanFace className="text-primary" size={22} />
-          Domestic Help Verification
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {!capturedImage ? (
-            <div className="relative border border-border rounded-lg overflow-hidden bg-black">
-              {isCapturing ? (
-                <>
-                  <video 
-                    ref={videoRef} 
-                    autoPlay 
-                    playsInline 
-                    className="w-full h-[300px] object-cover"
-                  ></video>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 flex justify-center">
-                    <Button 
-                      onClick={captureImage}
-                      className="shadow-xl"
-                    >
-                      <Camera size={16} className="mr-2" />
-                      Capture Image
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <div className="h-[300px] flex flex-col items-center justify-center bg-muted/20">
-                  <ScanFace size={64} className="text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground mb-4">Start camera to verify domestic help's identity</p>
-                  <Button 
-                    onClick={startCamera}
-                    className="mt-2"
-                  >
-                    <Camera size={16} className="mr-2" />
-                    Start Camera
-                  </Button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Captured Image</p>
-                  <div className="border border-border rounded-lg overflow-hidden">
-                    <img 
-                      src={capturedImage} 
-                      alt="Captured face" 
-                      className="w-full h-[220px] object-cover" 
-                    />
-                  </div>
-                </div>
-                
-                {result && (
-                  <div className="space-y-2">
-                    {result.visitor ? (
-                      <>
-                        <p className="text-sm font-medium">Matched Registry Entry</p>
-                        <div className="border border-border rounded-lg p-4">
-                          <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-medium">{result.visitor.name}</h3>
-                            <Badge variant={result.verified ? "default" : "outline"}>
-                              {result.verified ? "Verified" : "Check ID"}
-                            </Badge>
-                          </div>
-                          <div className="space-y-1 text-sm text-muted-foreground">
-                            <p>Works at Unit {result.visitor.hostUnit}</p>
-                            <p>Host: {result.visitor.hostName}</p>
-                            <p>{result.visitor.purpose}</p>
-                          </div>
-                          <div className="mt-3 flex items-center">
-                            <p className="text-sm">Match confidence: </p>
-                            <Badge 
-                              variant={result.verified ? "default" : "outline"}
-                              className="ml-2"
-                            >
-                              {result.matchScore}%
-                            </Badge>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="border border-border rounded-lg p-4 flex flex-col items-center justify-center h-[220px]">
-                        <AlertTriangle size={40} className="text-destructive mb-2" />
-                        <h3 className="font-medium text-center">No Match Found</h3>
-                        <p className="text-sm text-muted-foreground text-center mt-1">
-                          This person is not registered in the system
-                        </p>
-                        <Badge variant="outline" className="mt-3">
-                          Match Score: {result.matchScore}%
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
-                )}
+    <div className="space-y-8 max-w-md mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle>Domestic Help Verification</CardTitle>
+          <CardDescription>Verify the identity of domestic help against their registered photo</CardDescription>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          {errorMessage && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          )}
+          
+          <div className="relative overflow-hidden rounded-lg border bg-background aspect-video">
+            {isCameraActive && (
+              <video 
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+              />
+            )}
+            
+            {capturedImage && (
+              <img 
+                src={capturedImage} 
+                alt="Captured" 
+                className="w-full h-full object-cover"
+              />
+            )}
+            
+            {!isCameraActive && !capturedImage && (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                <Camera className="h-16 w-16 text-muted-foreground" />
               </div>
-              
-              <div className="flex justify-between">
-                <Button 
-                  variant="outline" 
-                  onClick={resetCapture}
-                >
-                  Try Again
-                </Button>
-                
-                {result && result.visitor && (
-                  <div className="space-x-2">
-                    <Button 
-                      variant="outline" 
-                      className="border-red-200 bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800"
-                    >
-                      <X size={16} className="mr-1" />
-                      Deny Entry
-                    </Button>
-                    <Button 
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <Check size={16} className="mr-1" />
-                      Permit Entry
-                    </Button>
-                  </div>
-                )}
+            )}
+            
+            {verificationResult === 'success' && (
+              <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
+                <div className="bg-white p-2 rounded-full">
+                  <Check className="h-8 w-8 text-green-500" />
+                </div>
               </div>
+            )}
+            
+            {verificationResult === 'failed' && (
+              <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                <div className="bg-white p-2 rounded-full">
+                  <X className="h-8 w-8 text-red-500" />
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <canvas ref={canvasRef} className="hidden" />
+        </CardContent>
+        
+        <CardFooter className="flex flex-col space-y-2">
+          {!isCameraActive && !capturedImage && (
+            <Button className="w-full" onClick={startCamera}>
+              <Camera className="mr-2 h-4 w-4" />
+              Start Camera
+            </Button>
+          )}
+          
+          {isCameraActive && (
+            <Button className="w-full" onClick={captureImage}>
+              <Camera className="mr-2 h-4 w-4" />
+              Capture
+            </Button>
+          )}
+          
+          {capturedImage && verificationResult === null && (
+            <div className="flex gap-2 w-full">
+              <Button variant="outline" className="flex-1" onClick={resetCamera}>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Retake
+              </Button>
+              <Button 
+                className="flex-1" 
+                onClick={verifyImage} 
+                disabled={isVerifying}
+              >
+                {isVerifying ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    <Check className="mr-2 h-4 w-4" />
+                    Verify
+                  </>
+                )}
+              </Button>
             </div>
           )}
           
-          {loading && (
-            <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-lg">
-              <div className="flex flex-col items-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-3"></div>
-                <p className="text-muted-foreground">Analyzing image...</p>
-              </div>
-            </div>
+          {verificationResult && (
+            <Button variant="outline" className="w-full" onClick={resetCamera}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Start Over
+            </Button>
           )}
-        </div>
-      </CardContent>
-    </Card>
+        </CardFooter>
+      </Card>
+      
+      {verificationResult === 'success' && (
+        <Alert>
+          <Check className="h-4 w-4" />
+          <AlertTitle>Verification Successful</AlertTitle>
+          <AlertDescription>
+            Identity matched with Lakshmi, registered domestic help for Apartment 205.
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {verificationResult === 'failed' && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Verification Failed</AlertTitle>
+          <AlertDescription>
+            No match found in the registered domestic help database. Please verify again or contact society office.
+          </AlertDescription>
+        </Alert>
+      )}
+    </div>
   );
 }

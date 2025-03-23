@@ -12,6 +12,7 @@ import Vendors from "./pages/Vendors";
 import BookkeepingAccounts from "./pages/BookkeepingAccounts";
 import BookkeepingByelaws from "./pages/BookkeepingByelaws";
 import BookkeepingMinutes from "./pages/BookkeepingMinutes";
+import FinanceChat from "./pages/FinanceChat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/bookkeeping/accounts" element={<BookkeepingAccounts />} />
           <Route path="/bookkeeping/bye-laws" element={<BookkeepingByelaws />} />
           <Route path="/bookkeeping/gbm-minutes" element={<BookkeepingMinutes />} />
+          <Route path="/finance-chat" element={<FinanceChat />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
