@@ -2,7 +2,7 @@
 import Layout from "@/components/Layout";
 import { VendorList, PaymentList, AddPaymentButton } from "@/components/VendorPayments";
 import { Button } from "@/components/ui/button";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, IndianRupee } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -64,22 +64,34 @@ const Vendors = () => {
                   <div className="space-y-4">
                     <div className="flex flex-col">
                       <span className="text-muted-foreground text-sm">Total Paid (Current Month)</span>
-                      <span className="text-2xl font-bold">$4,850</span>
+                      <div className="flex items-center">
+                        <IndianRupee size={18} className="mr-1" />
+                        <span className="text-2xl font-bold">48,500</span>
+                      </div>
                     </div>
                     
                     <div className="flex flex-col">
                       <span className="text-muted-foreground text-sm">Pending Payments</span>
-                      <span className="text-2xl font-bold">$2,500</span>
+                      <div className="flex items-center">
+                        <IndianRupee size={18} className="mr-1" />
+                        <span className="text-2xl font-bold">25,000</span>
+                      </div>
                     </div>
                     
                     <div className="flex flex-col">
                       <span className="text-muted-foreground text-sm">Overdue Payments</span>
-                      <span className="text-2xl font-bold">$350</span>
+                      <div className="flex items-center">
+                        <IndianRupee size={18} className="mr-1" />
+                        <span className="text-2xl font-bold">3,500</span>
+                      </div>
                     </div>
                     
                     <div className="flex flex-col">
                       <span className="text-muted-foreground text-sm">Total (Year to Date)</span>
-                      <span className="text-2xl font-bold">$24,750</span>
+                      <div className="flex items-center">
+                        <IndianRupee size={18} className="mr-1" />
+                        <span className="text-2xl font-bold">2,47,500</span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

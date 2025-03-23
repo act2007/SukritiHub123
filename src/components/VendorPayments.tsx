@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Vendor, Payment } from '@/lib/types';
-import { Building, DollarSign, CalendarDays, FileText, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Building, IndianRupee, CalendarDays, FileText, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
 export function VendorList() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -121,7 +120,7 @@ export function PaymentList() {
           id: '1',
           vendorId: '1',
           vendorName: 'Garden Maintenance Co.',
-          amount: 1200,
+          amount: 12000,
           date: '2023-05-01',
           description: 'Monthly maintenance',
           status: 'paid',
@@ -131,7 +130,7 @@ export function PaymentList() {
           id: '2',
           vendorId: '2',
           vendorName: 'Clean Pool Services',
-          amount: 800,
+          amount: 8000,
           date: '2023-05-05',
           description: 'Pool cleaning and chemicals',
           status: 'paid',
@@ -141,7 +140,7 @@ export function PaymentList() {
           id: '3',
           vendorId: '3',
           vendorName: 'Apex Security',
-          amount: 2500,
+          amount: 25000,
           date: '2023-05-15',
           description: 'Security personnel',
           status: 'pending',
@@ -150,7 +149,7 @@ export function PaymentList() {
           id: '4',
           vendorId: '4',
           vendorName: 'Quick Fix Plumbing',
-          amount: 350,
+          amount: 3500,
           date: '2023-04-25',
           description: 'Emergency repairs',
           status: 'overdue',
@@ -173,9 +172,10 @@ export function PaymentList() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'INR',
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -240,7 +240,10 @@ export function PaymentList() {
                 )}
               </div>
               <div className="flex flex-col items-end">
-                <span className="font-semibold text-lg">{formatCurrency(payment.amount)}</span>
+                <div className="flex items-center gap-1">
+                  <IndianRupee size={14} />
+                  <span className="font-semibold text-lg">{formatCurrency(payment.amount)}</span>
+                </div>
                 <div className="flex items-center gap-1 text-sm">
                   {getStatusIcon(payment.status)}
                   <span>{getStatusText(payment.status)}</span>
@@ -257,7 +260,7 @@ export function PaymentList() {
 export function AddPaymentButton() {
   return (
     <Button>
-      <DollarSign size={16} className="mr-2" />
+      <IndianRupee size={16} className="mr-2" />
       Add Payment
     </Button>
   );
