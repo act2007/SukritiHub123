@@ -1,12 +1,16 @@
 
 import Layout from "@/components/Layout";
 import { ResidentSearch, ResidentList } from "@/components/ResidentDirectory";
+import { ResidentRegistrationModal } from "@/components/ResidentRegistrationModal";
 import { Button } from "@/components/ui/button";
 import { Plus, FileUp, Download } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 
 const Residents = () => {
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+
   return (
     <Layout>
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
@@ -17,7 +21,7 @@ const Residents = () => {
         
         <div className="flex items-center space-x-2 w-full md:w-auto">
           <ResidentSearch />
-          <Button>
+          <Button onClick={() => setIsRegistrationOpen(true)}>
             <Plus size={16} className="mr-2" />
             Add Resident
           </Button>
@@ -123,8 +127,13 @@ const Residents = () => {
           </CardContent>
         </Card>
       </div>
+      
+      <ResidentRegistrationModal 
+        open={isRegistrationOpen}
+        onOpenChange={setIsRegistrationOpen}
+      />
     </Layout>
   );
-};
+}
 
 export default Residents;

@@ -1,6 +1,7 @@
 
 import Layout from "@/components/Layout";
 import { DomesticHelpVerification } from "@/components/DomesticHelpVerification";
+import { MaidRegistrationModal } from "@/components/MaidRegistrationModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { UserPlus, RefreshCw } from "lucide-react";
 export default function DomesticHelp() {
   const [maids, setMaids] = useState<Maid[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
 
   useEffect(() => {
     loadMaids();
@@ -29,6 +31,10 @@ export default function DomesticHelp() {
     }
   };
 
+  const handleRegistrationSuccess = () => {
+    loadMaids();
+  };
+
   return (
     <Layout>
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
@@ -42,7 +48,7 @@ export default function DomesticHelp() {
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
-          <Button>
+          <Button onClick={() => setIsRegistrationOpen(true)}>
             <UserPlus className="mr-2 h-4 w-4" />
             Register New
           </Button>
@@ -129,6 +135,12 @@ export default function DomesticHelp() {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      <MaidRegistrationModal 
+        open={isRegistrationOpen}
+        onOpenChange={setIsRegistrationOpen}
+        onSuccess={handleRegistrationSuccess}
+      />
     </Layout>
   );
 }

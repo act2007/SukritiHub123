@@ -1,12 +1,16 @@
 
 import Layout from "@/components/Layout";
 import { GuardList, PatrolLogList, LogPatrolForm } from "@/components/GuardPatrol";
+import { GuardRegistrationModal } from "@/components/GuardRegistrationModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Shield, FileText } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 
 const Guards = () => {
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
+
   return (
     <Layout>
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
@@ -16,7 +20,7 @@ const Guards = () => {
         </div>
         
         <div className="flex items-center space-x-2">
-          <Button>
+          <Button onClick={() => setIsRegistrationOpen(true)}>
             <Plus size={16} className="mr-2" />
             Add Guard
           </Button>
@@ -131,8 +135,13 @@ const Guards = () => {
           </div>
         </TabsContent>
       </Tabs>
+      
+      <GuardRegistrationModal 
+        open={isRegistrationOpen}
+        onOpenChange={setIsRegistrationOpen}
+      />
     </Layout>
   );
-};
+}
 
 export default Guards;
