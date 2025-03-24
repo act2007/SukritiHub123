@@ -1,9 +1,9 @@
-
 import Layout from "@/components/Layout";
 import { DashboardStats, RecentActivity, QuickActions, UpcomingVisits } from "@/components/Dashboard";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, Bot, WhatsappIcon } from "lucide-react";
+import { Plus, FileText, Bot } from "lucide-react";
 import { Link } from "react-router-dom";
+import { WhatsappIcon } from "@/components/WhatsAppIntegration";
 
 const Index = () => {
   return (
