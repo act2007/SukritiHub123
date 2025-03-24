@@ -49,6 +49,14 @@ export async function fetchMaids() {
  */
 export async function verifyFace(imageData: string) {
   try {
+    // Validate image data
+    if (!imageData || !imageData.startsWith('data:image/')) {
+      return {
+        success: false,
+        message: 'Invalid image data. Please capture a valid photo.'
+      };
+    }
+    
     // For demo purposes, we're using a mock implementation
     // In a real app, this would send the image to a face recognition API
     // and process the response
@@ -86,14 +94,14 @@ export async function verifyFace(imageData: string) {
       return {
         success: false,
         confidence: 30 + Math.floor(Math.random() * 40), // Random low confidence
-        message: 'No match found'
+        message: 'No match found for this face'
       };
     }
   } catch (error) {
     console.error('Face verification error:', error);
     return {
       success: false,
-      message: 'Error during face verification'
+      message: 'Error during face verification. Please try again.'
     };
   }
 }

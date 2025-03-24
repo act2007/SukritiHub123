@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,10 +25,24 @@ export function DomesticHelpVerification() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [mode, setMode] = useState<'check-in' | 'check-out'>('check-in');
   const [attendanceRecorded, setAttendanceRecorded] = useState(false);
+  const [permissionStatus, setPermissionStatus] = useState<'prompt' | 'granted' | 'denied'>('prompt');
   const { toast } = useToast();
 
   useEffect(() => {
-    // Cleanup function to stop camera when component unmounts
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions.query({ name: 'camera' as PermissionName })
+        .then(status => {
+          setPermissionStatus(status.state as 'prompt' | 'granted' | 'denied');
+          
+          status.onchange = () => {
+            setPermissionStatus(status.state as 'prompt' | 'granted' | 'denied');
+          };
+        })
+        .catch(err => {
+          console.error('Permission API error:', err);
+        });
+    }
+    
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
@@ -41,7 +54,11 @@ export function DomesticHelpVerification() {
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 480 } },
+        video: { 
+          facingMode: 'user',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        },
         audio: false,
       });
       
@@ -52,7 +69,16 @@ export function DomesticHelpVerification() {
       }
     } catch (error) {
       console.error('Error accessing camera:', error);
-      setErrorMessage('Unable to access camera. Please check permissions.');
+      
+      if ((error as DOMException).name === 'NotAllowedError') {
+        setPermissionStatus('denied');
+        setErrorMessage('Camera access denied. Please allow camera access in your browser settings.');
+      } else if ((error as DOMException).name === 'NotFoundError') {
+        setErrorMessage('No camera found. Please connect a camera and try again.');
+      } else {
+        setErrorMessage('Unable to access camera. Please check permissions and try again.');
+      }
+      
       toast({
         variant: "destructive",
         title: "Camera Error",
@@ -77,18 +103,14 @@ export function DomesticHelpVerification() {
       const context = canvas.getContext('2d');
       
       if (context) {
-        // Set canvas dimensions to match video
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         
-        // Draw video frame to canvas
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         
-        // Convert canvas to image data URL
         const imageDataUrl = canvas.toDataURL('image/png');
         setCapturedImage(imageDataUrl);
         
-        // Stop camera after capturing
         stopCamera();
       }
     }
@@ -172,6 +194,28 @@ export function DomesticHelpVerification() {
     }
   };
 
+  const renderPermissionUI = () => {
+    if (permissionStatus === 'denied') {
+      return (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Camera Access Denied</AlertTitle>
+          <AlertDescription>
+            <p className="mb-2">You've denied camera access. To use this feature, you need to allow camera access in your browser settings.</p>
+            <p className="text-sm">Instructions: 
+              <ul className="list-disc pl-5 mt-1">
+                <li>Click the camera/lock icon in your browser's address bar</li>
+                <li>Change the camera permission to "Allow"</li>
+                <li>Refresh the page</li>
+              </ul>
+            </p>
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="space-y-8 max-w-md mx-auto">
       <Tabs defaultValue="verification" className="w-full">
@@ -214,6 +258,8 @@ export function DomesticHelpVerification() {
             </CardHeader>
             
             <CardContent className="space-y-4">
+              {renderPermissionUI()}
+              
               {errorMessage && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -269,7 +315,11 @@ export function DomesticHelpVerification() {
             
             <CardFooter className="flex flex-col space-y-2">
               {!isCameraActive && !capturedImage && (
-                <Button className="w-full" onClick={startCamera}>
+                <Button 
+                  className="w-full" 
+                  onClick={startCamera}
+                  disabled={permissionStatus === 'denied'}
+                >
                   <Camera className="mr-2 h-4 w-4" />
                   Start Camera
                 </Button>
@@ -278,7 +328,7 @@ export function DomesticHelpVerification() {
               {isCameraActive && (
                 <Button className="w-full" onClick={captureImage}>
                   <Camera className="mr-2 h-4 w-4" />
-                  Capture
+                  Take Photo
                 </Button>
               )}
               
@@ -286,7 +336,7 @@ export function DomesticHelpVerification() {
                 <div className="flex gap-2 w-full">
                   <Button variant="outline" className="flex-1" onClick={resetCamera}>
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Retake
+                    Retake Photo
                   </Button>
                   <Button 
                     className="flex-1" 
@@ -381,7 +431,6 @@ export function DomesticHelpVerification() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {/* This would be populated from the database in a real implementation */}
                 <p className="text-muted-foreground text-sm italic text-center py-8">
                   Attendance log will be displayed here.
                   <br />
