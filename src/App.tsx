@@ -14,6 +14,7 @@ import BookkeepingByelaws from "./pages/BookkeepingByelaws";
 import BookkeepingMinutes from "./pages/BookkeepingMinutes";
 import FinanceChat from "./pages/FinanceChat";
 import WhatsAppIntegration from "./pages/WhatsAppIntegration";
+import DomesticHelp from "./pages/DomesticHelp";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/bookkeeping/gbm-minutes" element={<BookkeepingMinutes />} />
           <Route path="/finance-chat" element={<FinanceChat />} />
           <Route path="/whatsapp-integration" element={<WhatsAppIntegration />} />
+          <Route path="/domestic-help" element={<DomesticHelp />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

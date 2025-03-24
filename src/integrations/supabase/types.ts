@@ -9,7 +9,122 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      Guard: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      Guards: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      "Maid Attendance": {
+        Row: {
+          apartment_unit: string | null
+          created_at: string
+          entry_time: string | null
+          exit_time: string | null
+          face_match_confidence: number | null
+          id: number
+          maid_id: number | null
+          status: string | null
+        }
+        Insert: {
+          apartment_unit?: string | null
+          created_at?: string
+          entry_time?: string | null
+          exit_time?: string | null
+          face_match_confidence?: number | null
+          id?: number
+          maid_id?: number | null
+          status?: string | null
+        }
+        Update: {
+          apartment_unit?: string | null
+          created_at?: string
+          entry_time?: string | null
+          exit_time?: string | null
+          face_match_confidence?: number | null
+          id?: number
+          maid_id?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Maid Attendance_maid_id_fkey"
+            columns: ["maid_id"]
+            isOneToOne: false
+            referencedRelation: "Maids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Maids: {
+        Row: {
+          apartment_unit: string | null
+          created_at: string
+          "Face Descriptor": Json | null
+          face_descriptor: Json | null
+          id: number
+          "Name of Maid": string | null
+          phone_number: string | null
+        }
+        Insert: {
+          apartment_unit?: string | null
+          created_at?: string
+          "Face Descriptor"?: Json | null
+          face_descriptor?: Json | null
+          id?: number
+          "Name of Maid"?: string | null
+          phone_number?: string | null
+        }
+        Update: {
+          apartment_unit?: string | null
+          created_at?: string
+          "Face Descriptor"?: Json | null
+          face_descriptor?: Json | null
+          id?: number
+          "Name of Maid"?: string | null
+          phone_number?: string | null
+        }
+        Relationships: []
+      }
+      "Night Patrol Beat": {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
