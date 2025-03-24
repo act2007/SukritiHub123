@@ -2,7 +2,7 @@
 import Layout from "@/components/Layout";
 import { DashboardStats, RecentActivity, QuickActions, UpcomingVisits } from "@/components/Dashboard";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, Bot } from "lucide-react";
+import { Plus, FileText, Bot, WhatsappIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -15,6 +15,28 @@ const Index = () => {
             <Button variant="outline">
               <Bot size={16} className="mr-2" />
               Finance Assistant
+            </Button>
+          </Link>
+          <Link to="/whatsapp-integration">
+            <Button variant="outline" className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="mr-2"
+              >
+                <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+                <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1Z" />
+                <path d="M14 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1Z" />
+                <path d="M9.5 13.5c.5 1 1.5 1 2.5 1s2-.5 2.5-1" />
+              </svg>
+              WhatsApp Payments
             </Button>
           </Link>
           <Button>

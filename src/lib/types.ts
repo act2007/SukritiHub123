@@ -9,6 +9,7 @@ export interface Resident {
   moveInDate: string;
   status: 'active' | 'inactive';
   type?: 'owner' | 'tenant';
+  whatsappNumber?: string;
 }
 
 export interface Visitor {
@@ -64,6 +65,7 @@ export interface Payment {
   status: 'pending' | 'paid' | 'overdue';
   paymentMethod?: string;
   receiptUrl?: string;
+  whatsappSource?: string;
 }
 
 export interface Statistic {
@@ -92,3 +94,18 @@ export interface BookkeepingDocument {
   fileUrl?: string;
   description?: string;
 }
+
+export interface WhatsAppPayment {
+  id: string;
+  residentId: string;
+  residentName: string;
+  residentUnit: string;
+  amount: number;
+  dateReceived: string;
+  messageType: 'image' | 'voice' | 'text';
+  mediaUrl?: string;
+  processedStatus: 'pending' | 'processed' | 'rejected';
+  paymentId?: string;
+  notes?: string;
+}
+
